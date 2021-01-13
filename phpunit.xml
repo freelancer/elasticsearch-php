@@ -1,24 +1,25 @@
-<phpunit
-        bootstrap="tests/bootstrap.php"
-        colors="true"
-        convertNoticesToExceptions="true"
-        convertWarningsToExceptions="true"
-        convertErrorsToExceptions="true"
-        syntaxCheck="true"
-        verbose="true"
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         convertErrorsToExceptions="true"
+         verbose="true"
 >
-    <php>
-        <env name="ES_TEST_HOST" value="http://localhost:9200"/>
-    </php>
-    <testsuites>
-        <testsuite>
-            <directory>tests</directory>
-            <exclude>tests/Elasticsearch/Tests/YamlRunnerTest.php</exclude>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">src</directory>
-        </whitelist>
-    </filter>
+  <coverage>
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+  </coverage>
+  <php>
+    <env name="ES_TEST_HOST" value="http://localhost:9200"/>
+  </php>
+  <testsuites>
+    <testsuite name="Unit tests">
+      <directory>tests</directory>
+      <exclude>tests/Elasticsearch/Tests/YamlRunnerTest.php</exclude>
+    </testsuite>
+  </testsuites>
 </phpunit>

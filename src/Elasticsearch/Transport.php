@@ -48,7 +48,7 @@ class Transport
      * @param ConnectionPool\AbstractConnectionPool $connectionPool
      * @param \Psr\Log\LoggerInterface $log    Monolog logger object
      */
-    public function __construct($retries, $sniffOnStart = false, AbstractConnectionPool $connectionPool, LoggerInterface $log)
+    public function __construct($retries, AbstractConnectionPool $connectionPool, LoggerInterface $log, $sniffOnStart = false)
     {
         $this->log            = $log;
         $this->connectionPool = $connectionPool;

@@ -1,5 +1,7 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class ClientTest
  *
@@ -10,7 +12,7 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache2
  * @link       http://elasticsearch.org
  */
-class ClientIntegrationTests extends \PHPUnit_Framework_TestCase
+class ClientIntegrationTests extends TestCase
 {
     public function testCustomQueryParams()
     {

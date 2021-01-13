@@ -12,6 +12,7 @@ use Elasticsearch\Common\Exceptions\RequestTimeout408Exception;
 use Elasticsearch\Common\Exceptions\ServerErrorResponseException;
 use Elasticsearch\Common\Exceptions\RoutingMissingException;
 use GuzzleHttp\Ring\Future\FutureArrayInterface;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -29,7 +30,7 @@ use Symfony\Component\Yaml\Yaml;
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache2
  * @link       http://elasticsearch.org
  */
-class YamlRunnerTest extends \PHPUnit_Framework_TestCase
+class YamlRunnerTest extends TestCase
 {
     /** @var Parser Yaml parser for reading integrations tests */
     private $yaml;
@@ -84,7 +85,7 @@ class YamlRunnerTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $host = static::getHost();
         echo "Test Host: $host\n";
@@ -102,7 +103,7 @@ class YamlRunnerTest extends \PHPUnit_Framework_TestCase
         echo "ES Version: ".static::$esVersion."\n";
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->clean();
         $builder = Elasticsearch\ClientBuilder::create()->setHosts([self::getHost()]);
@@ -179,7 +180,7 @@ class YamlRunnerTest extends \PHPUnit_Framework_TestCase
      * @param      $operation
      * @param      $lastOperationResult
      * @param      $testName
-     * @param array $context 
+     * @param array $context
      * @param bool $async
      *
      * @return mixed

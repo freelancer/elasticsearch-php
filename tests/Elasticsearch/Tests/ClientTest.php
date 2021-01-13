@@ -3,9 +3,11 @@
 namespace Elasticsearch\Tests;
 
 use Elasticsearch;
+use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Elasticsearch\Connections\Connection;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ClientTest
@@ -17,18 +19,18 @@ use Mockery as m;
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache2
  * @link       http://elasticsearch.org
  */
-class ClientTest extends \PHPUnit_Framework_TestCase
+class ClientTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
 
-    /**
-     * @expectedException \Elasticsearch\Common\Exceptions\InvalidArgumentException
-     */
     public function testConstructorIllegalPort()
     {
+        $this->expectException(\Elasticsearch\Common\Exceptions\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not parse URI');
+
         $client = Elasticsearch\ClientBuilder::create()->setHosts(['localhost:abc'])->build();
     }
 
@@ -42,11 +44,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             'handler' => ClientBuilder::multiHandler()
         ];
         $client = ClientBuilder::fromConfig($params);
+
+        $this->assertInstanceOf(Client::class, $client);
     }
 
-    /**
-     * @expectedException \Elasticsearch\Common\Exceptions\RuntimeException
-     */
     public function testFromConfigBadParam()
     {
         $params = [
@@ -56,6 +57,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             'retries' => 2,
             'imNotReal' => 5
         ];
+
+        $this->expectException(\Elasticsearch\Common\Exceptions\RuntimeException::class);
+        $this->expectExceptionMessage('Unknown parameters provided: imNotReal');
+
         $client = ClientBuilder::fromConfig($params);
     }
 
@@ -69,136 +74,150 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             'imNotReal' => 5
         ];
         $client = ClientBuilder::fromConfig($params, true);
+
+        $this->assertInstanceOf(Client::class, $client);
     }
 
-    public function testNullDelete()
+    public function testIndexCannotBeNullForDelete()
     {
         $client = ClientBuilder::create()->build();
 
-        try {
-            $client->delete([
-                'index' => null,
-                'type' => 'test',
-                'id' => 'test'
-            ]);
-            $this->fail("InvalidArgumentException was not thrown");
-        } catch (Elasticsearch\Common\Exceptions\InvalidArgumentException $e) {
-            // all good
-        }
+        $this->expectException(Elasticsearch\Common\Exceptions\InvalidArgumentException::class);
+        $this->expectExceptionMessage('index cannot be null');
 
-        try {
-            $client->delete([
-                'index' => 'test',
-                'type' => null,
-                'id' => 'test'
-            ]);
-            $this->fail("InvalidArgumentException was not thrown");
-        } catch (Elasticsearch\Common\Exceptions\InvalidArgumentException $e) {
-            // all good
-        }
-
-        try {
-            $client->delete([
-                'index' => 'test',
-                'type' => 'test',
-                'id' => null
-            ]);
-            $this->fail("InvalidArgumentException was not thrown");
-        } catch (Elasticsearch\Common\Exceptions\InvalidArgumentException $e) {
-            // all good
-        }
+        $client->delete([
+            'index' => null,
+            'type' => 'test',
+            'id' => 'test'
+        ]);
     }
 
-    public function testEmptyStringDelete()
+    public function testTypeCannotBeNullForDelete()
     {
         $client = ClientBuilder::create()->build();
 
-        try {
-            $client->delete([
-                'index' => '',
-                'type' => 'test',
-                'id' => 'test'
-            ]);
-            $this->fail("InvalidArgumentException was not thrown");
-        } catch (Elasticsearch\Common\Exceptions\InvalidArgumentException $e) {
-            // all good
-        }
+        $this->expectException(Elasticsearch\Common\Exceptions\InvalidArgumentException::class);
+        $this->expectExceptionMessage('type cannot be null');
 
-        try {
-            $client->delete([
-                'index' => 'test',
-                'type' => '',
-                'id' => 'test'
-            ]);
-            $this->fail("InvalidArgumentException was not thrown");
-        } catch (Elasticsearch\Common\Exceptions\InvalidArgumentException $e) {
-            // all good
-        }
-
-        try {
-            $client->delete([
-                'index' => 'test',
-                'type' => 'test',
-                'id' => ''
-            ]);
-            $this->fail("InvalidArgumentException was not thrown");
-        } catch (Elasticsearch\Common\Exceptions\InvalidArgumentException $e) {
-            // all good
-        }
+        $client->delete([
+            'index' => 'test',
+            'type' => null,
+            'id' => 'test'
+        ]);
     }
 
-    public function testArrayOfEmptyStringDelete()
+    public function testIdCannotBeNullForDelete()
     {
         $client = ClientBuilder::create()->build();
 
-        try {
-            $client->delete([
-                'index' => ['', '', ''],
-                'type' => 'test',
-                'id' => 'test'
-            ]);
-            $this->fail("InvalidArgumentException was not thrown");
-        } catch (Elasticsearch\Common\Exceptions\InvalidArgumentException $e) {
-            // all good
-        }
+        $this->expectException(Elasticsearch\Common\Exceptions\InvalidArgumentException::class);
+        $this->expectExceptionMessage('id cannot be null');
 
-        try {
-            $client->delete([
-                'index' => 'test',
-                'type' => ['', '', ''],
-                'id' => 'test'
-            ]);
-            $this->fail("InvalidArgumentException was not thrown");
-        } catch (Elasticsearch\Common\Exceptions\InvalidArgumentException $e) {
-            // all good
-        }
+        $client->delete([
+            'index' => 'test',
+            'type' => 'test',
+            'id' => null
+        ]);
     }
 
-    public function testArrayOfNullDelete()
+
+    public function testIndexCannotBeEmptyForDelete()
     {
         $client = ClientBuilder::create()->build();
 
-        try {
-            $client->delete([
-                'index' => [null, null, null],
-                'type' => 'test',
-                'id' => 'test'
-            ]);
-            $this->fail("InvalidArgumentException was not thrown");
-        } catch (Elasticsearch\Common\Exceptions\InvalidArgumentException $e) {
-            // all good
-        }
+        $this->expectException(Elasticsearch\Common\Exceptions\InvalidArgumentException::class);
+        $this->expectExceptionMessage('index cannot be an empty string');
 
-        try {
-            $client->delete([
-                'index' => 'test',
-                'type' => [null, null, null],
-                'id' => 'test'
-            ]);
-            $this->fail("InvalidArgumentException was not thrown");
-        } catch (Elasticsearch\Common\Exceptions\InvalidArgumentException $e) {
-            // all good
-        }
+        $client->delete([
+            'index' => '',
+            'type' => 'test',
+            'id' => 'test'
+        ]);
+    }
+
+    public function testTypeCannotBeEmptyForDelete()
+    {
+        $client = ClientBuilder::create()->build();
+
+        $this->expectException(Elasticsearch\Common\Exceptions\InvalidArgumentException::class);
+        $this->expectExceptionMessage('type cannot be an empty string');
+
+        $client->delete([
+            'index' => 'test',
+            'type' => '',
+            'id' => 'test'
+        ]);
+    }
+
+    public function testIdCannotBeEmptyForDelete()
+    {
+        $client = ClientBuilder::create()->build();
+
+        $this->expectException(Elasticsearch\Common\Exceptions\InvalidArgumentException::class);
+        $this->expectExceptionMessage('id cannot be an empty string');
+
+        $client->delete([
+            'index' => 'test',
+            'type' => 'test',
+            'id' => ''
+        ]);
+    }
+
+    public function testIndexCannotBeArrayOfEmptyStringForDelete()
+    {
+        $client = ClientBuilder::create()->build();
+
+        $this->expectException(Elasticsearch\Common\Exceptions\InvalidArgumentException::class);
+        $this->expectExceptionMessage('index cannot be an array of empty strings');
+
+        $client->delete([
+            'index' => ['', '', ''],
+            'type' => 'test',
+            'id' => 'test'
+        ]);
+    }
+
+    public function testTypeCannotBeArrayOfEmptyStringForDelete()
+    {
+        $client = ClientBuilder::create()->build();
+
+        $this->expectException(Elasticsearch\Common\Exceptions\InvalidArgumentException::class);
+        $this->expectExceptionMessage('type cannot be an array of empty strings');
+
+        $client->delete([
+            'index' => 'test',
+            'type' => ['', '', ''],
+            'id' => 'test'
+        ]);
+    }
+
+
+    public function testIndexCannotBeArrayOfNullForDelete()
+    {
+        $client = ClientBuilder::create()->build();
+
+        $this->expectException(Elasticsearch\Common\Exceptions\InvalidArgumentException::class);
+        $this->expectExceptionMessage('index cannot be an array of empty strings');
+
+        $client->delete([
+            'index' => [null, null, null],
+            'type' => 'test',
+            'id' => 'test'
+        ]);
+    }
+
+    public function testTypeCannotBeArrayOfNullForDelete()
+    {
+        $client = ClientBuilder::create()->build();
+
+        $this->expectException(Elasticsearch\Common\Exceptions\InvalidArgumentException::class);
+        $this->expectExceptionMessage('type cannot be an array of empty strings');
+
+        $client->delete([
+            'index' => 'test',
+            'type' => [null, null, null],
+            'id' => 'test'
+        ]);
     }
 
     public function testMaxRetriesException()

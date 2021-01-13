@@ -7,6 +7,7 @@ use Elasticsearch\ClientBuilder;
 use Elasticsearch\Serializers\SerializerInterface;
 use Elasticsearch\Transport;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class RegisteredNamespaceTest
@@ -18,9 +19,9 @@ use Mockery as m;
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache2
  * @link       http://elasticsearch.org
  */
-class RegisteredNamespaceTest extends \PHPUnit_Framework_TestCase
+class RegisteredNamespaceTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
@@ -32,11 +33,9 @@ class RegisteredNamespaceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("123", $client->foo()->fooMethod());
     }
 
-    /**
-     * @expectedException \Elasticsearch\Common\Exceptions\BadMethodCallException
-     */
     public function testNonExistingNamespace()
     {
+        $this->expectException(\Elasticsearch\Common\Exceptions\BadMethodCallException::class);
         $builder = new FooNamespaceBuilder();
         $client = ClientBuilder::create()->registerNamespace($builder)->build();
         $this->assertEquals("123", $client->bar()->fooMethod());

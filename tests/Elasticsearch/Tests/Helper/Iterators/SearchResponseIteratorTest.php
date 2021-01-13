@@ -4,6 +4,7 @@ namespace Elasticsearch\Tests\Helper\Iterators;
 
 use Elasticsearch\Helper\Iterators\SearchResponseIterator;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SearchResponseIteratorTest
@@ -12,10 +13,10 @@ use Mockery as m;
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache2
  * @link    http://Elasticsearch.org
  */
-class SearchResponseIteratorTest extends \PHPUnit_Framework_TestCase
+class SearchResponseIteratorTest extends TestCase
 {
 
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }

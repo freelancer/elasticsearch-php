@@ -5,6 +5,7 @@ namespace Elasticsearch\Tests\ConnectionPool;
 use Elasticsearch;
 use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class StaticConnectionPoolTest
@@ -16,9 +17,9 @@ use Mockery as m;
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache2
  * @link       http://elasticsearch.org
  */
-class StaticConnectionPoolTest extends \PHPUnit_Framework_TestCase
+class StaticConnectionPoolTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
@@ -114,6 +115,9 @@ class StaticConnectionPoolTest extends \PHPUnit_Framework_TestCase
 
         $randomizeHosts = false;
         $connectionPool = new Elasticsearch\ConnectionPool\StaticConnectionPool($connections, $selector, $connectionFactory, $randomizeHosts);
+
+        $this->expectException(\Elasticsearch\Common\Exceptions\NoNodesAvailableException::class);
+        $this->expectExceptionMessage('No alive nodes found in your cluster');
 
         $connectionPool->nextConnection();
     }
@@ -219,13 +223,9 @@ class StaticConnectionPoolTest extends \PHPUnit_Framework_TestCase
             ->setConnectionPool('\Elasticsearch\ConnectionPool\StaticConnectionPool', [])
             ->build();
 
-        try {
-            $client->search([]);
-            $this->fail("Should have thrown NoNodesAvailableException");
-        } catch (Elasticsearch\Common\Exceptions\NoNodesAvailableException $e) {
-            // All good
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->expectException(Elasticsearch\Common\Exceptions\NoNodesAvailableException::class);
+        $this->expectExceptionMessage('No alive nodes found in your cluster');
+
+        $client->search([]);
     }
 }

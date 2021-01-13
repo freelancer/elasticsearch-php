@@ -1,5 +1,7 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class StaticConnectionPoolIntegrationTest
  *
@@ -10,12 +12,12 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache2
  * @link       http://elasticsearch.org
  */
-class StaticConnectionPoolIntegrationTest extends \PHPUnit_Framework_TestCase
+class StaticConnectionPoolIntegrationTest extends TestCase
 {
     // Issue #636
     public function test404Liveness() {
         $client = \Elasticsearch\ClientBuilder::create()
-            ->setHosts([$_SERVER['ES_TEST_HOST']])
+            ->setHosts([getenv('ES_TEST_HOST')])
             ->setConnectionPool(\Elasticsearch\ConnectionPool\StaticConnectionPool::class)
             ->build();
 

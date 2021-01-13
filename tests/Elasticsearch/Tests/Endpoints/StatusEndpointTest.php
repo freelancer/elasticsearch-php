@@ -6,12 +6,13 @@ namespace Elasticsearch\Tests\Endpoints;
 
 use Elasticsearch\Endpoints\Snapshot\Status;
 use Elasticsearch\Common\Exceptions;
+use PHPUnit\Framework\TestCase;
 
-class StatusEndpointTest extends \PHPUnit\Framework\TestCase
+class StatusEndpointTest extends TestCase
 {
     private $endpoint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->endpoint = new Status();
     }

@@ -3,6 +3,7 @@
 use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
 use Elasticsearch\ConnectionPool\SniffingConnectionPool;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SniffingConnectionPoolTest
@@ -14,15 +15,15 @@ use Mockery as m;
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache2
  * @link       http://elasticsearch.org
  */
-class SniffingConnectionPoolTest extends \PHPUnit_Framework_TestCase
+class SniffingConnectionPoolTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         static::markTestSkipped("All of Sniffing unit tests use outdated cluster state format, need to redo");
     }
 
 
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
